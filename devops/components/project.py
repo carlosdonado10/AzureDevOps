@@ -57,18 +57,3 @@ class Project(BaseModel):
 
         return [Release(**release_data, release_definition=ReleaseDefinition(**release_data["releaseDefinition"])) for
                 release_data in response.json()['value']]
-
-
-if __name__ == '__main__':
-    [p] = Project.get_list_of_projects()
-    start_date = datetime(2024, 2, 1)
-    end_date = datetime(2024, 3, 1)
-    l_of_releases = p.get_list_of_releases_by_dates(start_date, end_date)
-    deployed_envs = []
-
-    print('Getting the released stages!')
-    for release in tqdm(l_of_releases):
-        deployed_envs.extend(release.get_deployed_environments(p.id))
-
-    c = Counter(deployed_envs)
-    pd.DataFrame(c.items(), columns=["Stage", "Number of Deployments"]).to_csv(r'C:\projects\AzureDevOps/deployments.csv', index=False)
